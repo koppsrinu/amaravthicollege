@@ -1,6 +1,7 @@
 package com.amaravathi.college.manager;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ public class studentmanager {
 	
 	@Autowired
 	private studentsdao studentdao;
+	private depnames depname;
 	public List<StudentDeatils> getStudents(){
 		List<StudentDeatils> student = (List<StudentDeatils>) studentdao.findAll();
 		return student;
@@ -27,17 +29,27 @@ public class studentmanager {
 		
 	}
 	public List<StudentDeatils> getDeps(String dep) {
-		
+		List<StudentDeatils> student = new ArrayList<StudentDeatils>();
 		
 		if(dep!=null) {
 			List<StudentDeatils> studentbydep = studentdao.nameBydep(dep);
 			if(studentbydep!=null) {
-				List<StudentDeatils> students = (List<StudentDeatils>) studentdao.findAll();
-			    return students;
+				for(StudentDeatils students : studentbydep) {
+					StudentDeatils studentdetails = new StudentDeatils();
+					studentdetails.setId(students.getId());
+					studentdetails.setName(students.getName());
+					studentdetails.setDateofbirth(students.getDateofbirth());
+					StudentDeatils stu = depname.getDep(students.getDep());
+					if(stu!=null) {
+					 studentdetails.setDep(students.getDep());	
+					}
+					student.add(studentdetails);
+				
+				}
 			}
 		}
 		
-		return null;
+		return student;
 		
 }
 	public String updateStudent(StudentDeatils student) {
